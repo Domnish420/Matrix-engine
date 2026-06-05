@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Cookie Counter</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Edible Venture Matrix Engine</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0c0c0c;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 650px;
+            margin: 0 auto;
+            width: 100%;
+            padding-bottom: 380px; /* Secure bottom dashboard POS control spacing */
+        }
+        .card {
+            background-color: #141414;
+            border: 1px solid #222222;
+            border-radius: 16px;
+            padding: 15px;
+        }
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .hud-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00bcd4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .main-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            text-align: center;
+        }
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            border: 1px solid #262626;
+        }
+        .label {
+            font-size: 0.75rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .count {
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: #4caf50;
+            line-height: 1.1;
+        }
+        .revenue {
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: #ffb300;
+            line-height: 1.1;
+        }
+        .sub-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .sub-box {
+            background: #181818;
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid #222;
+        }
+        .sub-num {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        /* Spreadsheet Table Checklist Layout */
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .sheet-table th {
+            background-color: #1a1a1a;
+            color: #888;
+            text-align: left;
+            padding: 8px;
+            font-weight: bold;
+            border-bottom: 2px solid #2d2d2d;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+        .sheet-table td {
+            padding: 8px;
+            border-bottom: 1px solid #222;
+            vertical-align: middle;
+        }
+        .sheet-table tr:hover {
+            background-color: #181818;
+        }
+        .active-row {
+            background-color: rgba(0, 188, 212, 0.05) !important;
+            border-left: 3px solid #00bcd4;
+        }
+        
+        .radio-hud-selector {
+            transform: scale(1.2);
+            cursor: pointer;
+            accent-color: #00bcd4;
+        }
+        
+        .pipeline-select {
+            border: 1px solid #444;
+            color: white;
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        .stage-infusing { background-color: #3e2723; border-color: #d84315; color: #ff8a65; }
+        .stage-prepping { background-color: #3e2723; border-color: #ff8f00; color: #ffb74d; }
+        .stage-prepped { background-color: #1b5e20; border-color: #4caf50; color: #81c784; }
+        .stage-frozen { background-color: #0d47a1; border-color: #2196f3; color: #90caf9; }
+
+        .tactile-counter-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .btn-tactile-adjustment {
+            background: #222;
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-tactile-adjustment:active { background: #444; }
+
+        .date-container-block {
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .date-label-helper {
+            font-size: 0.6rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .date-input-inline {
+            background: #111;
+            border: 1px solid #333;
+            color: #00bcd4;
+            font-size: 0.8rem;
+            padding: 4px;
+            border-radius: 6px;
+            width: 115px;
+            font-family: inherit;
+        }
+
+        .chart-toggle-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .btn-chart-toggle {
+            flex: 1;
+            white-space: nowrap;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            background: #222;
+            color: #aaa;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-chart-toggle.active {
+            background: #00bcd4;
+            color: #121212;
+            font-weight: bold;
+            border-color: #00bcd4;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+        }
+        
+        /* POS Slider Control Module */
+        .pos-slider-box {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+        .slider-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .slider-label {
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .slider-qty-indicator {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00bcd4;
+            background: #000;
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        .pos-range-input {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #222;
+            outline: none;
+            accent-color: #00bcd4;
+            cursor: pointer;
+        }
+
+        /* Fixed Master Controls at Screen Footer */
+        .bottom-panel {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background-color: #111111;
+            border-top: 2px solid #222222;
+            padding: 12px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+            z-index: 100;
+        }
+        .bottom-container {
+            max-width: 650px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        button {
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.1s, transform 0.05s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.2;
+        }
+        button .btn-subtext {
+            font-size: 0.75rem;
+            font-weight: normal;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        button:active { transform: scale(0.97); }
+        .btn-sell-primary { background-color: #4caf50; color: white; }
+        .btn-eat { background-color: #9c27b0; color: white; font-size: 0.85rem; padding: 10px; }
+        .btn-loss { background-color: #f44336; color: white; font-size: 0.85rem; padding: 10px; }
+        .btn-batch { background-color: #00bcd4; color: #121212; font-size: 0.85rem; padding: 10px; }
+        .btn-undo { background-color: #ff9800; color: #121212; font-size: 0.85rem; padding: 10px; }
+        .btn-reset { background-color: #262626; color: #888; font-size: 0.85rem; padding: 10px; }
+        button:disabled {
+            background-color: #1c1c1c !important;
+            color: #444 !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        button:disabled .btn-subtext { display: none; }
+        
+        /* Modal Framework */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #161616;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 460px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .modal h3 { margin: 0; font-size: 1.25rem; color: #00bcd4; text-align: center; text-transform: uppercase; letter-spacing: 1px;}
+        .modal input, .modal select {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .modal label { font-size: 0.8rem; color: #aaa; font-weight: bold; display: block; margin-bottom: 4px; }
+        
+        .category-input-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            align-items: end;
+        }
+        .btn-inline-add {
+            padding: 10px 14px;
+            font-size: 1rem;
+            background-color: #333;
+            color: #00bcd4;
+            border: 1px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            height: 40px;
+            font-weight: bold;
+        }
+        .btn-inline-add:active { background-color: #444; }
+
+        .calc-box {
+            background: #1f1f1f;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px dashed #333;
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .calc-output {
+            text-align: center;
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 6px;
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 5px;
+            border: 1px solid rgba(255,152,0,0.3);
+        }
+
+        /* Discount Rules Table Layout */
+        .discount-rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+        .discount-rules-table th {
+            text-align: left;
+            color: #666;
+            padding: 4px;
+            font-size: 0.65rem;
+            border-bottom: 1px solid #333;
+        }
+        .discount-rules-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #222;
+        }
+        .btn-remove-rule {
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="hud-header">
+                <div class="hud-title">Active POS Terminal</div>
+                <div id="hudItemName" style="font-weight: bold; color: #fff; font-size: 0.9rem;">No Active Item Target</div>
+            </div>
+            <div class="main-stats">
+                <div class="stat-box">
+                    <div id="hudStockLabel" class="label">Available Stock</div>
+                    <div id="countDisplay" class="count">0</div>
+                    <div id="mgDisplay" class="mg-badge" style="display:none;">0 mg</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Gross Revenue Stream</div>
+                    <div id="revenueDisplay" class="revenue">£0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 10px; overflow-x: auto;">
+            <div class="label" style="margin: 10px 0 10px 8px; color: #fff; font-weight: bold;">Product Pipeline Ledger & Checklist</div>
+            <table class="sheet-table" id="pipelineSheet">
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">HUD</th>
+                        <th>Product Details</th>
+                        <th style="width: 105px; text-align: center;">Stock Pool</th>
+                        <th style="width: 130px; text-align: center;">Pipeline Stage</th>
+                        <th style="width: 45px; text-align: center;">Clone</th>
+                    </tr>
+                </thead>
+                <tbody id="sheetBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="hud-header" style="border-bottom: 1px solid #222; padding-bottom: 6px; margin-bottom: 8px;">
+                <div class="label" style="color: #fff; font-weight: bold; margin: 0;">POS Custom Campaign Discount Engine</div>
+                <button type="button" class="btn-tactile-adjustment" id="btnToggleDiscountModal" style="color: #00bcd4;">+ Config Rules</button>
+            </div>
+            <table class="discount-rules-table">
+                <thead>
+                    <tr>
+                        <th>Target Strength</th>
+                        <th>Trigger Qty</th>
+                        <th>Flat Bundle Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="discountRulesTableBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="label" style="margin-bottom: 10px; text-align: center; color: #aaa;">Enterprise Financial Records</div>
+            <div class="sub-stats">
+                <div class="sub-box">
+                    <div class="label" style="font-size:0.6rem;">Lifetime Units</div>
+                    <div id="totalSoldDisplay" class="sub-num" style="color:#4caf50;">0</div>
+                </div>
+                <div class="sub-box">
+                    <div class="label" style="font-size:0.6rem;">Ceiling Record</div>
+                    <div id="highestMgDisplay" class="sub-num" style="color:#00bcd4;">0</div>
+                </div>
+                <div class="sub-box">
+                    <div class="label" style="font-size:0.6rem;">Enterprise Profit</div>
+                    <div id="mgRevenueDisplay" class="sub-num" style="color:#ffb300;">£0</div>
+                </div>
+                <div class="sub-box">
+                    <div class="label" style="font-size:0.6rem;">Wastage Logs</div>
+                    <div id="wasteDisplay" class="sub-num" style="color:#e91e63;">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chart-toggle-row" id="chartToggleContainer">
+                <button class="btn-chart-toggle active" id="btnChartMacro" onclick="switchChartContext('macro')">Macro View</button>
+                <button class="btn-chart-toggle" id="btnChartTimeline" onclick="switchChartContext('timeline')">Finances</button>
+            </div>
+            <div id="chartTitle" class="label" style="margin-bottom: 10px; text-align: center; color: #fff;">Macro Categories (Units Sold)</div>
+            <div class="chart-container">
+                <canvas id="businessChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-panel">
+        <div class="bottom-container">
+            
+            <div class="pos-slider-box">
+                <div class="slider-header-row">
+                    <span class="slider-label">Cart Quantity Multiplexer</span>
+                    <span id="posQtyIndicator" class="slider-qty-indicator">1</span>
+                </div>
+                <input type="range" id="posQtySlider" class="pos-range-input" min="1" max="20" value="1">
+            </div>
+
+            <div class="row" style="grid-template-columns: 1fr;">
+                <button class="btn-sell-primary" id="sellPrimaryBtn">
+                    <span id="sellPrimaryText">Select Target</span>
+                    <span id="sellPrimaryPrice" class="btn-subtext">£0.00</span>
+                </button>
+            </div>
+            <div class="row">
+                <button class="btn-eat" id="eatBtn">🍳 Eaten By Me</button>
+                <button class="btn-loss" id="lossBtn">⚠️ Loss / Damage</button>
+            </div>
+            <div class="row">
+                <button class="btn-batch" id="newBatchBtn">📐 Advanced Sizing Calculator</button>
+                <button class="btn-undo" id="undoBtn">↩️ Undo Last Action</button>
+            </div>
+            <div class="row" style="grid-template-columns: 1fr;">
+                <button class="btn-reset" id="resetBtn">Clear System Storage</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="batchModal">
+        <div class="modal-content">
+            <h3>📐 Advanced Size Logic Panel</h3>
+            
+            <div class="category-input-row">
+                <div style="width: 100%;">
+                    <label>Macro Storage Category Group</label>
+                    <select id="inputCategory">
+                        </select>
+                </div>
+                <button type="button" class="btn-inline-add" id="createNewCategoryBtn" title="Create Custom Category">+</button>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label>Measurement Unit Type</label>
+                    <select id="inputUnitType">
+                        <option value="pucks">Pucks / Pieces (Solid)</option>
+                        <option value="ml">Millilitres / ml (Liquid)</option>
+                        <option value="g">Grams / g (Bulk Solid)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Specific Variant Name</label>
+                    <input type="text" id="inputName" value="Loaded Cookies" placeholder="Loaded Cookies, Infused Milk, Brownies...">
+                </div>
+            </div>
+
+            <div class="calc-box">
+                <label style="color: #00bcd4; margin-bottom: 8px;">📊 Automated Strength Engine</label>
+                <div class="calc-grid">
+                    <div>
+                        <label>Flower Raw Mass (Grams)</label>
+                        <input type="number" id="calcFlowerGrams" value="21" step="0.1">
+                    </div>
+                    <div>
+                        <label>Tested THC Purity %</label>
+                        <input type="number" id="calcThcPercent" value="18" step="0.1">
+                    </div>
+                </div>
+                <div style="margin-top: 8px;">
+                    <label>Calculated Batch Potency Capacity Pool:</label>
+                    <div id="calcOutputDisplay" class="calc-output">3780 mg</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label id="lblTargetMg">Target Strength (mg)</label>
+                    <input type="number" id="inputMg" value="50" min="1">
+                </div>
+                <div>
+                    <label id="lblTotalVolume">Total Yield (Items)</label>
+                    <input type="number" id="inputCount" value="86" min="1">
+                </div>
+            </div>
+
+            <div class="calc-box" id="liquidSubCalcBox" style="display:none; background:#141414; border:1px solid #333;">
+                <label style="color: #00bcd4; margin-bottom: 4px; font-size: 0.75rem;">🥤 Liquid Formulation Helper</label>
+                <div class="calc-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div>
+                        <label style="font-size:0.7rem;">Single Serving Size (ml)</label>
+                        <input type="number" id="liquidServingSize" value="250" min="1">
+                    </div>
+                    <div style="display:flex; flex-direction:column; justify-content:end; font-size:0.8rem; color:#aaa; padding-bottom:10px;" id="liquidHelperOutput">
+                        Yields: 0 servings
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label>Initial Pipeline Status Allocation</label>
+                    <select id="inputStage">
+                        <option value="Infusing">Infusing</option>
+                        <option value="Prepping">Prepping</option>
+                        <option value="Prepped">Prepped</option>
+                        <option value="Frozen">Frozen Reserve</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Freeze Date (DD/MM/YYYY)</label>
+                    <input type="text" id="inputFreezeDate" placeholder="05/06/2026">
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 5px;">
+                <button style="background:#222; color:white; padding:12px;" id="cancelBatchBtn">Cancel</button>
+                <button style="background:#00bcd4; color:#121212; padding:12px;" id="saveBatchBtn">Add to Spreadsheet Ledger</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="discountModal">
+        <div class="modal-content">
+            <h3>🏷️ Config Discount Campaigns</h3>
+            <div>
+                <label>Target Strength Tier (mg)</label>
+                <input type="number" id="discMgTier" value="50" min="1">
+            </div>
+            <div class="row">
+                <div>
+                    <label>Trigger Quantity</label>
+                    <input type="number" id="discQtyTrigger" value="5" min="2">
+                </div>
+                <div>
+                    <label>Flat Bundle Retail Price (£)</label>
+                    <input type="number" id="discFlatPrice" value="20" min="1">
+                </div>
+            </div>
+            <p style="font-size:0.7rem; color:#888; margin: 0; line-height:1.3;">Example: Entering Tier 50, Qty 5, Price 20 means buying exactly 5 items of a 50mg batch updates the total sale price automatically from £25 to £20.</p>
+            <div class="row" style="margin-top: 5px;">
+                <button style="background:#222; color:white; padding:12px;" id="closeDiscountModalBtn">Close</button>
+                <button style="background:#4caf50; color:white; padding:12px;" id="saveDiscountRuleBtn">Activate Campaign</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System Category Hierarchy Memory Management Setup
+        let dynamicCategoriesList = localStorage.getItem('bk_cat_list') !== null ? JSON.parse(localStorage.getItem('bk_cat_list')) : ["Cookies", "Drinks", "Cakes", "Gummies", "Brownies"];
+
+        // Helper function to get today's date formatted perfectly in UK standard string (DD/MM/YYYY)
+        function getUkTodayString() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        // Baseline Ledger Setup
+        let ledgerList = localStorage.getItem('bk_ledger_list_cat') !== null ? JSON.parse(localStorage.getItem('bk_ledger_list_cat')) : [
+            { id: "init-cook", name: "Loaded Cookies", category: "Cookies", mg: 50, totalYield: 86, stock: 86, unitType: "pucks", stage: "Frozen", freezeDate: getUkTodayString() }
+        ];
+
+        // Custom Dynamic Promotion Framework Store (Defaulting to corporate rules requested)
+        let discountCampaignRules = localStorage.getItem('bk_discount_rules') !== null ? JSON.parse(localStorage.getItem('bk_discount_rules')) : [
+            { mgTier: 50, triggerQty: 5, flatPrice: 20 },  // 5 for £20 (Cookies baseline standard rule)
+            { mgTier: 100, triggerQty: 3, flatPrice: 25 }  // 3 for £25 rule
+        ];
+
+        let activeItemId = localStorage.getItem('bk_active_id') !== null ? localStorage.getItem('bk_active_id') : "init-cook";
+        let globalRevenue = localStorage.getItem('bk_gl_rev') !== null ? parseInt(localStorage.getItem('bk_gl_rev')) : 0;
+        let totalSold = localStorage.getItem('bk_ttl_sold') !== null ? parseInt(localStorage.getItem('bk_ttl_sold')) : 0;
+        let highestMg = localStorage.getItem('bk_high_mg') !== null ? parseInt(localStorage.getItem('bk_high_mg')) : 50;
+        
+        let eatenCount = localStorage.getItem('bk_eaten') !== null ? parseInt(localStorage.getItem('bk_eaten')) : 0;
+        let lossCount = localStorage.getItem('bk_loss') !== null ? parseInt(localStorage.getItem('bk_loss')) : 0;
+
+        let variantSalesRegistry = localStorage.getItem('bk_var_sales') !== null ? JSON.parse(localStorage.getItem('bk_var_sales')) : { "Loaded Cookies": { category: "Cookies", units: 0, revenue: 0 } };
+        let transactionTimeline = localStorage.getItem('bk_timeline') !== null ? JSON.parse(localStorage.getItem('bk_timeline')) : [];
+        let applicationHistoryStack = localStorage.getItem('bk_history_stack') !== null ? JSON.parse(localStorage.getItem('bk_history_stack')) : [];
+
+        let currentChartContext = 'macro'; 
+        let systemChartInstance = null;
+        let isRecalculating = false;
+
+        // Visual Layout Interface Elements Assignments
+        const hudItemName = document.getElementById('hudItemName');
+        const countDisplay = document.getElementById('countDisplay');
+        const mgDisplay = document.getElementById('mgDisplay');
+        const revenueDisplay = document.getElementById('revenueDisplay');
+        const totalSoldDisplay = document.getElementById('totalSoldDisplay');
+        const highestMgDisplay = document.getElementById('highestMgDisplay');
+        const mgRevenueDisplay = document.getElementById('mgRevenueDisplay');
+        const wasteDisplay = document.getElementById('wasteDisplay');
+        const sheetBody = document.getElementById('sheetBody');
+        const hudStockLabel = document.getElementById('hudStockLabel');
+
+        const sellPrimaryBtn = document.getElementById('sellPrimaryBtn');
+        const sellPrimaryText = document.getElementById('sellPrimaryText');
+        const sellPrimaryPrice = document.getElementById('sellPrimaryPrice');
+        const posQtySlider = document.getElementById('posQtySlider');
+        const posQtyIndicator = document.getElementById('posQtyIndicator');
+
+        const eatBtn = document.getElementById('eatBtn');
+        const lossBtn = document.getElementById('lossBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const newBatchBtn = document.getElementById('newBatchBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Modal Assignments
+        const batchModal = document.getElementById('batchModal');
+        const inputCategory = document.getElementById('inputCategory');
+        const inputUnitType = document.getElementById('inputUnitType');
+        const inputName = document.getElementById('inputName');
+        const inputCount = document.getElementById('inputCount');
+        const inputMg = document.getElementById('inputMg');
+        const inputStage = document.getElementById('inputStage');
+        const inputFreezeDate = document.getElementById('inputFreezeDate');
+        const calcFlowerGrams = document.getElementById('calcFlowerGrams');
+        const calcThcPercent = document.getElementById('calcThcPercent');
+        const calcOutputDisplay = document.getElementById('calcOutputDisplay');
+        const saveBatchBtn = document.getElementById('saveBatchBtn');
+        const cancelBatchBtn = document.getElementById('cancelBatchBtn');
+        const createNewCategoryBtn = document.getElementById('createNewCategoryBtn');
+        const chartToggleContainer = document.getElementById('chartToggleContainer');
+        
+        const lblTargetMg = document.getElementById('lblTargetMg');
+        const lblTotalVolume = document.getElementById('lblTotalVolume');
+        const liquidSubCalcBox = document.getElementById('liquidSubCalcBox');
+        const liquidServingSize = document.getElementById('liquidServingSize');
+        const liquidHelperOutput = document.getElementById('liquidHelperOutput');
+
+        // Discount Campaign Modals Elements
+        const discountModal = document.getElementById('discountModal');
+        const btnToggleDiscountModal = document.getElementById('btnToggleDiscountModal');
+        const closeDiscountModalBtn = document.getElementById('closeDiscountModalBtn');
+        const saveDiscountRuleBtn = document.getElementById('saveDiscountRuleBtn');
+        const discMgTier = document.getElementById('discMgTier');
+        const discQtyTrigger = document.getElementById('discQtyTrigger');
+        const discFlatPrice = document.getElementById('discFlatPrice');
+        const discountRulesTableBody = document.getElementById('discountRulesTableBody');
+
+        function recordHistoryStateSnapshot(actionTypeLabel) {
+            const historicalSnapshot = {
+                actionType: actionTypeLabel,
+                ledgerListSnapshot: JSON.parse(JSON.stringify(ledgerList)),
+                globalRevenueSnapshot: globalRevenue,
+                totalSoldSnapshot: totalSold,
+                highestMgSnapshot: highestMg,
+                eatenCountSnapshot: eatenCount,
+                lossCountSnapshot: lossCount,
+                variantSalesRegistrySnapshot: JSON.parse(JSON.stringify(variantSalesRegistry)),
+                transactionTimelineSnapshot: JSON.parse(JSON.stringify(transactionTimeline)),
+                dynamicCategoriesSnapshot: JSON.parse(JSON.stringify(dynamicCategoriesList)),
+                discountCampaignRulesSnapshot: JSON.parse(JSON.stringify(discountCampaignRules))
+            };
+            applicationHistoryStack.push(historicalSnapshot);
+            if (applicationHistoryStack.length > 30) applicationHistoryStack.shift();
+            localStorage.setItem('bk_history_stack', JSON.stringify(applicationHistoryStack));
+        }
+
+        inputUnitType.addEventListener('change', () => {
+            const mode = inputUnitType.value;
+            if (mode === 'ml') {
+                lblTargetMg.textContent = "THC per 1ml Liquid (mg)";
+                lblTotalVolume.textContent = "Total Batch Liquid (ml)";
+                liquidSubCalcBox.style.display = "block";
+            } else if (mode === 'g') {
+                lblTargetMg.textContent = "THC per 1g Product (mg)";
+                lblTotalVolume.textContent = "Total Weight Mass (g)";
+                liquidSubCalcBox.style.display = "none";
+            } else {
+                lblTargetMg.textContent = "Target Strength (mg)";
+                lblTotalVolume.textContent = "Yield Output Units";
+                liquidSubCalcBox.style.display = "none";
+            }
+            runInverseSizingMath('count');
+        });
+
+        function runInverseSizingMath(sourceField) {
+            if (isRecalculating) return;
+            isRecalculating = true;
+            
+            const grams = parseFloat(calcFlowerGrams.value) || 0;
+            const thcPercent = parseFloat(calcThcPercent.value) || 0;
+            const totalBatchMg = Math.round(grams * 1000 * (thcPercent / 100));
+            calcOutputDisplay.textContent = totalBatchMg + ' mg';
+
+            const mode = inputUnitType.value;
+
+            if (totalBatchMg > 0) {
+                if (sourceField === 'mg') {
+                    const targetMg = parseFloat(inputMg.value) || 0;
+                    if (targetMg > 0) inputCount.value = Math.floor(totalBatchMg / targetMg);
+                } else {
+                    const totalVolume = parseFloat(inputCount.value) || 0;
+                    if (totalVolume > 0) {
+                        inputMg.value = (mode === 'pucks') ? Math.round(totalBatchMg / totalVolume) : parseFloat((totalBatchMg / totalVolume).toFixed(2));
+                    }
+                }
+            }
+
+            if (mode === 'ml') {
+                const totalMl = parseFloat(inputCount.value) || 0;
+                const glassSize = parseFloat(liquidServingSize.value) || 1;
+                const strengthPerMl = parseFloat(inputMg.value) || 0;
+                const totalServings = Math.floor(totalMl / glassSize);
+                const mgPerGlass = Math.round(strengthPerMl * glassSize);
+                liquidHelperOutput.innerHTML = `Yields: <b>${totalServings} portions</b><br>Strength: <b>${mgPerGlass}mg / serving</b>`;
+            }
+
+            isRecalculating = false;
+        }
+
+        calcFlowerGrams.addEventListener('input', () => runInverseSizingMath('source'));
+        calcThcPercent.addEventListener('input', () => runInverseSizingMath('source'));
+        inputCount.addEventListener('input', () => runInverseSizingMath('count'));
+        inputMg.addEventListener('input', () => runInverseSizingMath('mg'));
+        liquidServingSize.addEventListener('input', () => runInverseSizingMath('count'));
+
+        inputStage.addEventListener('change', () => {
+            if (inputStage.value === 'Frozen') {
+                inputFreezeDate.disabled = false;
+                if (!inputFreezeDate.value) inputFreezeDate.value = getUkTodayString();
+            } else {
+                inputFreezeDate.disabled = true;
+                inputFreezeDate.value = "";
+            }
+        });
+
+        // LIVE POS PRICING MATH ENGINE - Dynamic Slider Checkout Matrix Calculation
+        function calculateLiveCartPricing(itemObject, requestedQuantity) {
+            if (!itemObject) return { totalBill: 0, isDiscounted: false, individualUnitPrice: 0 };
+            
+            // Step 1: Establish base unit valuation metric standard ($10mg = £1 ratio standard rule)
+            let baseActiveMg = itemObject.mg;
+            if (itemObject.unitType === 'ml') {
+                baseActiveMg = itemObject.mg * 250; // Pricing metrics calculated around base portion volumes standard
+            }
+            const absoluteUnitPrice = baseActiveMg / 10;
+
+            // Step 2: Query Campaign Array storage logs to spot a matches pattern rule trigger
+            const campaignMatch = discountCampaignRules.find(r => r.mgTier === itemObject.mg && r.triggerQty === requestedQuantity);
+
+            if (campaignMatch && itemObject.unitType === 'pucks') {
+                // Return promotional bundle flat pricing rules parameters directly
+                return {
+                    totalBill: campaignMatch.flatPrice,
+                    isDiscounted: true,
+                    individualUnitPrice: absoluteUnitPrice
+                };
+            } else {
+                // Process standard linear transaction volume rule calculations
+                return {
+                    totalBill: absoluteUnitPrice * requestedQuantity,
+                    isDiscounted: false,
+                    individualUnitPrice: absoluteUnitPrice
+                };
+            }
+        }
+
+        // Live slider position movement monitoring handler
+        posQtySlider.addEventListener('input', () => {
+            posQtyIndicator.textContent = posQtySlider.value;
+            evaluateHUDControllerControls();
+        });
+
+        function executeTactileLedgerAdjustment(targetItemId, deviationQuantity) {
+            const match = ledgerList.find(i => i.id === targetItemId);
+            if (!match) return;
+            if (match.stock + deviationQuantity < 0) return;
+
+            recordHistoryStateSnapshot('Tactile Micro Adjust');
+            match.stock += deviationQuantity;
+            updateSystemUI();
+        }
+        window.executeTactileLedgerAdjustment = executeTactileLedgerAdjustment;
+
+        function executeRecipeBatchCloning(targetItemId) {
+            const template = ledgerList.find(i => i.id === targetItemId);
+            if (!template) return;
+
+            recordHistoryStateSnapshot('Batch Cloned');
+            const duplicateId = 'item-' + Date.now();
+            
+            ledgerList.push({
+                id: duplicateId, name: `${template.name} (Copy)`, category: template.category,
+                mg: template.mg, totalYield: template.totalYield, stock: template.totalYield,
+                unitType: template.unitType || "pucks", stage: template.stage,
+                freezeDate: template.stage === 'Frozen' ? getUkTodayString() : ""
+            });
+
+            activeItemId = duplicateId;
+            updateSystemUI();
+        }
+        window.executeRecipeBatchCloning = executeRecipeBatchCloning;
+
+        function syncSpreadsheetLedgerUI() {
+            sheetBody.innerHTML = "";
+            ledgerList.forEach(item => {
+                const isCurrentHudTarget = (item.id === activeItemId);
+                const tableRowElement = document.createElement('tr');
+                if (isCurrentHudTarget) tableRowElement.className = "active-row";
+
+                let displayUnitLabel = " Pcs"; 
+                if (item.unitType === 'ml') displayUnitLabel = "ml";
+                else if (item.unitType === 'g') displayUnitLabel = "g";
+                else if (item.unitType === 'pucks') displayUnitLabel = " Pcs";
+
+                let dosageShorthand = "/P";
+                if (item.unitType === 'ml') dosageShorthand = "/ml";
+                else if (item.unitType === 'g') dosageShorthand = "/g";
+                
+                let stageSubtext = "";
+                if (item.stage === 'Frozen' && item.freezeDate) {
+                    const dateParts = item.freezeDate.split('/');
+                    const compactDateDisplay = dateParts.length >= 2 ? `${dateParts[0]}/${dateParts[1]}` : item.freezeDate;
+                    stageSubtext = `<div style="font-size:0.65rem; color:#888; margin-top:2px;">Frozen: ${compactDateDisplay}</div>`;
+                }
+
+                let stageStyleClass = "stage-infusing";
+                if (item.stage === "Prepping") stageStyleClass = "stage-prepping";
+                if (item.stage === "Prepped") stageStyleClass = "stage-prepped";
+                if (item.stage === "Frozen") stageStyleClass = "stage-frozen";
+
+                tableRowElement.innerHTML = `
+                    <td style="text-align:center;">
+                        <input type="radio" name="hudSelect" class="radio-hud-selector" ${isCurrentHudTarget ? 'checked' : ''} onclick="updateActiveHudTarget('${item.id}')">
+                    </td>
+                    <td>
+                        <div style="font-weight:bold; color:#fff;">${item.name || "Unassigned"}</div>
+                        <div style="font-size:0.75rem; color:#00bcd4; font-weight:500;">${item.category || "General"} • <span style="color:#aaa;">${item.mg || 0}mg${dosageShorthand}</span></div>
+                    </td>
+                    <td style="text-align:center;">
+                        <div style="font-weight:bold; font-size:1rem; color:${item.stock === 0 ? '#f44336' : '#4caf50'}">${item.stock}<span style="font-size:0.65rem; color:#666; font-weight:normal;">/${item.totalYield}${displayUnitLabel}</span></div>
+                        <div class="tactile-counter-group">
+                            <button type="button" class="btn-tactile-adjustment" onclick="executeTactileLedgerAdjustment('${item.id}', -1)">-</button>
+                            <button type="button" class="btn-tactile-adjustment" onclick="executeTactileLedgerAdjustment('${item.id}', 1)">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="pipeline-select ${stageStyleClass}" onchange="shiftItemPipelineStage('${item.id}', this.value)">
+                            <option value="Infusing" ${item.stage === "Infusing" ? "selected" : ""}>Infusing</option>
+                            <option value="Prepping" ${item.stage === "Prepping" ? "selected" : ""}>Prepping</option>
+                            <option value="Prepped" ${item.stage === "Prepped" ? "selected" : ""}>Prepped</option>
+                            <option value="Frozen" ${item.stage === "Frozen" ? "selected" : ""}>Frozen</option>
+                        </select>
+                        ${stageSubtext}
+                        ${item.stage === 'Frozen' ? `<div class="date-container-block"><span class="date-label-helper">Edit Date:</span><input type="text" class="date-input-inline" value="${item.freezeDate || getUkTodayString()}" onchange="updateBatchFreezeDate('${item.id}', this.value)"></div>` : ''}
+                    </td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-tactile-adjustment" style="color:#00bcd4; padding: 4px 8px;" onclick="executeRecipeBatchCloning('${item.id}')" title="Clone Batch Recipe">📋</button>
+                    </td>
+                `;
+                sheetBody.appendChild(tableRowElement);
+            });
+        }
+
+        function syncDiscountCampaignEngineUI() {
+            discountRulesTableBody.innerHTML = "";
+            if (discountCampaignRules.length === 0) {
+                discountRulesTableBody.innerHTML = `<tr><td colspan="4" style="color:#555; text-align:center; padding:8px;">No promotional rules running. Full standard linear rates apply.</td></tr>`;
+                return;
+            }
+            discountCampaignRules.forEach((rule, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:bold; color:#00bcd4;">${rule.mgTier} mg</td>
+                    <td style="text-align:center; font-weight:bold; color:#fff;">${rule.triggerQty} units</td>
+                    <td style="font-weight:bold; color:#ffb300;">£${rule.flatPrice} bundle</td>
+                    <td><button type="button" class="btn-remove-rule" onclick="removeDiscountCampaignRule(${index})">Delete</button></td>
+                `;
+                discountRulesTableBody.appendChild(tr);
+            });
+        }
+
+        function removeDiscountCampaignRule(indexTarget) {
+            recordHistoryStateSnapshot('Remove Campaign Rule');
+            discountCampaignRules.splice(indexTarget, 1);
+            localStorage.setItem('bk_discount_rules', JSON.stringify(discountCampaignRules));
+            updateSystemUI();
+        }
+        window.removeDiscountCampaignRule = removeDiscountCampaignRule;
+
+        function updateActiveHudTarget(selectedTargetId) {
+            activeItemId = selectedTargetId;
+            localStorage.setItem('bk_active_id', activeItemId);
+            updateSystemUI();
+        }
+        window.updateActiveHudTarget = updateActiveHudTarget;
+
+        function shiftItemPipelineStage(targetItemId, targetedStageValue) {
+            const assetMatch = ledgerList.find(i => i.id === targetItemId);
+            if (assetMatch && assetMatch.stage !== targetedStageValue) {
+                recordHistoryStateSnapshot('Pipeline Shift');
+                assetMatch.stage = targetedStageValue;
+                if (targetedStageValue === 'Frozen' && !assetMatch.freezeDate) {
+                    assetMatch.freezeDate = getUkTodayString();
+                } else if (targetedStageValue !== 'Frozen') {
+                    assetMatch.freezeDate = "";
+                }
+                updateSystemUI();
+            }
+        }
+        window.shiftItemPipelineStage = shiftItemPipelineStage;
+
+        // Discount Configuration Modal Actions Framework
+        btnToggleDiscountModal.addEventListener('click', () => { discountModal.style.display = 'flex'; });
+        closeDiscountModalBtn.addEventListener('click', () => { discountModal.style.display = 'none'; });
+        saveDiscountRuleBtn.addEventListener('click', () => {
+            const tier = parseInt(discMgTier.value);
+            const qty = parseInt(discQtyTrigger.value);
+            const price = parseInt(discFlatPrice.value);
+
+            if (!isNaN(tier) && !isNaN(qty) && !isNaN(price) && tier > 0 && qty > 1 && price > 0) {
+                recordHistoryStateSnapshot('Add Campaign Rule');
+                
+                // Remove pre existing entries duplicates to protect computational stack lanes
+                const matchingRuleIndex = discountCampaignRules.findIndex(r => r.mgTier === tier && r.triggerQty === qty);
+                if (matchingRuleIndex !== -1) discountCampaignRules.splice(matchingRuleIndex, 1);
+
+                discountCampaignRules.push({ mgTier: tier, triggerQty: qty, flatPrice: price });
+                localStorage.setItem('bk_discount_rules', JSON.stringify(discountCampaignRules));
+                discountModal.style.display = 'none';
+                updateSystemUI();
+            } else {
+                alert("Please check values format constraints.");
+            }
+        });
+
+        createNewCategoryBtn.addEventListener('click', () => {
+            const requestedCategoryClean = prompt("Enter new product macro category name:");
+            if (requestedCategoryClean && requestedCategoryClean.trim() !== "") {
+                const categoryFormatted = requestedCategoryClean.trim();
+                if (dynamicCategoriesList.includes(categoryFormatted)) return;
+
+                recordHistoryStateSnapshot('Category Added');
+                dynamicCategoriesList.push(categoryFormatted);
+                localStorage.setItem('bk_cat_list', JSON.stringify(dynamicCategoriesList));
+                renderCategorySelectorDropdown();
+                updateChartToggleTabsContainer();
+                inputCategory.value = categoryFormatted;
+            }
+        });
+
+        function switchChartContext(contextType) {
+            currentChartContext = contextType;
+            const allToggleButtons = chartToggleContainer.querySelectorAll('.btn-chart-toggle');
+            allToggleButtons.forEach(btn => btn.classList.remove('active'));
+            
+            if (contextType === 'macro') {
+                document.getElementById('btnChartMacro').classList.add('active');
+            } else if (contextType === 'timeline') {
+                document.getElementById('btnChartTimeline').classList.add('active');
+            } else if (contextType.startsWith('drilldown-')) {
+                const targetCategoryName = contextType.split('drilldown-')[1];
+                const activeTargetBtn = document.getElementById(`btnChart-${targetCategoryName}`);
+                if (activeTargetBtn) activeTargetBtn.classList.add('active');
+            }
+            renderDataVisualizations();
+        }
+        window.switchChartContext = switchChartContext;
+
+        // POS CONTROL SYSTEM MONITOR - Updates and tracks active selections
+        function evaluateHUDControllerControls() {
+            const activeAssetObject = ledgerList.find(i => i.id === activeItemId);
+            const selectedVolumeCountMultiplier = parseInt(posQtySlider.value) || 1;
+
+            if (activeAssetObject) {
+                hudItemName.textContent = `${activeAssetObject.name}`;
+                countDisplay.textContent = activeAssetObject.stock;
+                
+                let dShorthand = activeAssetObject.unitType === 'ml' ? '/ml' : (activeAssetObject.unitType === 'g' ? '/g' : ' mg');
+                mgDisplay.style.display = "inline-block";
+                mgDisplay.textContent = activeAssetObject.mg + dShorthand;
+                
+                if (activeAssetObject.stage === "Infusing" || activeAssetObject.stage === "Prepping") {
+                    hudStockLabel.textContent = `${activeAssetObject.stage} Phase`;
+                    sellPrimaryBtn.disabled = true;
+                    sellPrimaryText.textContent = `Stage Blocked (${activeAssetObject.stage})`;
+                    sellPrimaryPrice.textContent = "Move to Prepped/Frozen to unlock";
+                    eatBtn.disabled = true; lossBtn.disabled = true;
+                } else {
+                    // Compute live cart checkout matrix parameters using dynamic engine logic rules
+                    const pricingModelResult = calculateLiveCartPricing(activeAssetObject, selectedVolumeCountMultiplier);
+                    
+                    let conceptualDeductionVolume = selectedVolumeCountMultiplier;
+                    if (activeAssetObject.unitType === 'ml') conceptualDeductionVolume = selectedVolumeCountMultiplier * 250;
+                    if (activeAssetObject.unitType === 'g') conceptualDeductionVolume = selectedVolumeCountMultiplier * 10;
+
+                    if (activeAssetObject.unitType === 'ml') {
+                        hudStockLabel.textContent = `Dispense Fluic Pool (${activeAssetObject.stage})`;
+                        sellPrimaryText.textContent = `Checkout ${selectedVolumeCountMultiplier} portions (${conceptualDeductionVolume}ml)`;
+                    } else if (activeAssetObject.unitType === 'g') {
+                        hudStockLabel.textContent = `Dispense Bulk Weight (${activeAssetObject.stage})`;
+                        sellPrimaryText.textContent = `Checkout ${selectedVolumeCountMultiplier} portions (${conceptualDeductionVolume}g)`;
+                    } else {
+                        hudStockLabel.textContent = `Stock Level Available (${activeAssetObject.stage})`;
+                        sellPrimaryText.textContent = `Checkout Cart Pool x ${selectedVolumeCountMultiplier}`;
+                    }
+
+                    // Check physical inventory storage limits before processing checkout operations
+                    const isInventorySufficient = activeAssetObject.stock >= conceptualDeductionVolume;
+                    sellPrimaryBtn.disabled = !isInventorySufficient;
+
+                    if (isInventorySufficient) {
+                        sellPrimaryPrice.textContent = `£${pricingModelResult.totalBill.toFixed(2)}` + (pricingModelResult.isDiscounted ? " (Campaign Deal Applied!)" : "");
+                    } else {
+                        sellPrimaryPrice.textContent = "Insufficient Stock Pools!";
+                    }
+
+                    eatBtn.disabled = activeAssetObject.stock < (activeAssetObject.unitType === 'ml' ? 250 : (activeAssetObject.unitType === 'g' ? 10 : 1));
+                    lossBtn.disabled = activeAssetObject.stock < (activeAssetObject.unitType === 'ml' ? 250 : (activeAssetObject.unitType === 'g' ? 10 : 1));
+                }
+
+                if (activeAssetObject.stock === 0) {
+                    countDisplay.style.color = "#f44336";
+                } else if (activeAssetObject.stage === 'Infusing' || activeAssetObject.stage === 'Prepping') {
+                    countDisplay.style.color = "#ff9800"; 
+                } else {
+                    countDisplay.style.color = "#4caf50";
+                }
+            } else {
+                hudItemName.textContent = "No Target Highlighted";
+                countDisplay.textContent = "0"; mgDisplay.style.display = "none";
+                sellPrimaryBtn.disabled = true; eatBtn.disabled = true; lossBtn.disabled = true;
+            }
+
+            revenueDisplay.textContent = '£' + globalRevenue;
+            totalSoldDisplay.textContent = totalSold;
+            highestMgDisplay.textContent = highestMg + 'mg';
+            wasteDisplay.textContent = (eatenCount + lossCount);
+
+            if (activeAssetObject && variantSalesRegistry[activeAssetObject.name]) {
+                mgRevenueDisplay.textContent = '£' + variantSalesRegistry[activeAssetObject.name].revenue;
+            } else {
+                mgRevenueDisplay.textContent = '£0';
+            }
+        }
+
+        function updateSystemUI() {
+            renderCategorySelectorDropdown();
+            updateChartToggleTabsContainer();
+            syncSpreadsheetLedgerUI();
+            syncDiscountCampaignEngineUI();
+            evaluateHUDControllerControls();
+
+            undoBtn.disabled = (applicationHistoryStack.length === 0);
+
+            localStorage.setItem('bk_cat_list', JSON.stringify(dynamicCategoriesList));
+            localStorage.setItem('bk_ledger_list_cat', JSON.stringify(ledgerList));
+            localStorage.setItem('bk_gl_rev', globalRevenue);
+            localStorage.setItem('bk_ttl_sold', totalSold);
+            localStorage.setItem('bk_high_mg', highestMg);
+            localStorage.setItem('bk_eaten', eatenCount);
+            localStorage.setItem('bk_loss', lossCount);
+            localStorage.setItem('bk_var_sales', JSON.stringify(variantSalesRegistry));
+            localStorage.setItem('bk_timeline', JSON.stringify(transactionTimeline));
+
+            const activeLinkElement = chartToggleContainer.querySelector('.btn-chart-toggle.active');
+            if(!activeLinkElement) switchChartContext('macro');
+            else renderDataVisualizations();
+        }
+
+        // UNIFIED TRANSACTION MASTER - Processes single or multi item checkouts smoothly
+        sellPrimaryBtn.addEventListener('click', () => {
+            const activeAssetObject = ledgerList.find(i => i.id === activeItemId);
+            if (!activeAssetObject) return;
+
+            const targetSliderMultiplicityVolume = parseInt(posQtySlider.value) || 1;
+            
+            let singlePortionDeductionSize = 1;
+            if (activeAssetObject.unitType === 'ml') singlePortionDeductionSize = 250;
+            if (activeAssetObject.unitType === 'g') singlePortionDeductionSize = 10;
+
+            const absoluteTotalDeductionInventoryUnits = singlePortionDeductionSize * targetSliderMultiplicityVolume;
+
+            if (activeAssetObject.stock < absoluteTotalDeductionInventoryUnits) return;
+
+            // Generate history rollback state snapshot
+            recordHistoryStateSnapshot(`POS checkout x${targetSliderMultiplicityVolume}`);
+
+            // Pull live billing data totals from module engine calculations
+            const pricingCalculationResults = calculateLiveCartPricing(activeAssetObject, targetSliderMultiplicityVolume);
+
+            // Mutate data parameters
+            activeAssetObject.stock -= absoluteTotalDeductionInventoryUnits;
+            globalRevenue += pricingCalculationResults.totalBill;
+
+            const normalizedSoldIncrementUnitValue = activeAssetObject.unitType === 'pucks' ? absoluteTotalDeductionInventoryUnits : targetSliderMultiplicityVolume;
+            totalSold += normalizedSoldIncrementUnitValue;
+
+            if (!variantSalesRegistry[activeAssetObject.name]) {
+                variantSalesRegistry[activeAssetObject.name] = { category: activeAssetObject.category, units: 0, revenue: 0 };
+            }
+            variantSalesRegistry[activeAssetObject.name].units += normalizedSoldIncrementUnitValue;
+            variantSalesRegistry[activeAssetObject.name].revenue += pricingCalculationResults.totalBill;
+
+            transactionTimeline.push({
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                revenueSnap: globalRevenue
+            });
+
+            // Reset slider back down to standard unit layout index value following checkout execution
+            posQtySlider.value = "1";
+            posQtyIndicator.textContent = "1";
+
+            updateSystemUI();
+        });
+
+        eatBtn.addEventListener('click', () => {
+            const activeAssetObject = ledgerList.find(i => i.id === activeItemId);
+            if (activeAssetObject) {
+                const size = activeAssetObject.unitType === 'ml' ? 250 : (activeAssetObject.unitType === 'g' ? 10 : 1);
+                if (activeAssetObject.stock >= size) {
+                    recordHistoryStateSnapshot('Eaten Log');
+                    activeAssetObject.stock -= size; eatenCount += 1; updateSystemUI();
+                }
+            }
+        });
+
+        lossBtn.addEventListener('click', () => {
+            const activeAssetObject = ledgerList.find(i => i.id === activeItemId);
+            if (activeAssetObject) {
+                const size = activeAssetObject.unitType === 'ml' ? 250 : (activeAssetObject.unitType === 'g' ? 10 : 1);
+                if (activeAssetObject.stock >= size) {
+                    recordHistoryStateSnapshot('Loss Log');
+                    activeAssetObject.stock -= size; lossCount += 1; updateSystemUI();
+                }
+            }
+        });
+
+        undoBtn.addEventListener('click', () => {
+            if (applicationHistoryStack.length === 0) return;
+            const targetPreviousState = applicationHistoryStack.pop();
+
+            ledgerList = targetPreviousState.ledgerListSnapshot;
+            globalRevenue = targetPreviousState.globalRevenueSnapshot;
+            totalSold = targetPreviousState.totalSoldSnapshot;
+            highestMgSnapshot = targetPreviousState.highestMgSnapshot;
+            highestMg = (highestMgSnapshot !== undefined) ? highestMgSnapshot : 50;
+            eatenCount = targetPreviousState.eatenCountSnapshot;
+            lossCount = targetPreviousState.lossCountSnapshot;
+            variantSalesRegistry = targetPreviousState.variantSalesRegistrySnapshot;
+            transactionTimeline = targetPreviousState.transactionTimelineSnapshot;
+            dynamicCategoriesList = targetPreviousState.dynamicCategoriesSnapshot;
+            discountCampaignRules = targetPreviousState.discountCampaignRulesSnapshot || discountCampaignRules;
+
+            const verifyActiveTargetStillExists = ledgerList.some(i => i.id === activeItemId);
+            if (!verifyActiveTargetStillExists && ledgerList.length > 0) {
+                activeItemId = ledgerList[ledgerList.length - 1].id;
+            }
+
+            localStorage.setItem('bk_history_stack', JSON.stringify(applicationHistoryStack));
+            updateSystemUI();
+        });
+
+        newBatchBtn.addEventListener('click', () => {
+            inputName.value = ""; inputCount.value = "86";
+            calcFlowerGrams.value = "21"; calcThcPercent.value = "18";
+            inputUnitType.value = "pucks";
+            inputStage.value = "Frozen";
+            inputFreezeDate.disabled = false;
+            inputFreezeDate.value = getUkTodayString();
+            lblTargetMg.textContent = "Target Strength (mg)";
+            lblTotalVolume.textContent = "Yield Output Units";
+            liquidSubCalcBox.style.display = "none";
+            runInverseSizingMath('count');
+            batchModal.style.display = 'flex';
+        });
+
+        cancelBatchBtn.addEventListener('click', () => { batchModal.style.display = 'none'; });
+
+        saveBatchBtn.addEventListener('click', () => {
+            const assignedCategory = inputCategory.value;
+            const selectedUnitType = inputUnitType.value;
+            const cleanName = inputName.value.trim() || "Unassigned Formulation";
+            const definedVolume = parseFloat(inputCount.value);
+            const definedMg = parseFloat(inputMg.value);
+            const designatedStage = inputStage.value;
+            const selectedFreezeDate = inputFreezeDate.value;
+
+            if (!isNaN(definedVolume) && definedVolume > 0 && !isNaN(definedMg) && definedMg >= 0) {
+                recordHistoryStateSnapshot('New Batch Created');
+                const uniqueGenerationId = 'item-' + Date.now();
+                
+                ledgerList.push({
+                    id: uniqueGenerationId, name: cleanName, category: assignedCategory,
+                    mg: definedMg, totalYield: definedVolume, stock: definedVolume, 
+                    unitType: selectedUnitType, stage: designatedStage,
+                    freezeDate: designatedStage === 'Frozen' ? (selectedFreezeDate || getUkTodayString()) : ""
+                });
+                activeItemId = uniqueGenerationId;
+
+                const checkMgValue = selectedUnitType === 'ml' ? (definedMg * 250) : definedMg;
+                if (checkMgValue > highestMg) highestMg = Math.round(checkMgValue);
+                
+                if (!variantSalesRegistry[cleanName]) {
+                    variantSalesRegistry[cleanName] = { category: assignedCategory, units: 0, revenue: 0 };
+                }
+
+                batchModal.style.display = 'none';
+                updateSystemUI();
+            } else {
+                alert("Please check metric fields values before creating.");
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (confirm("Reset everything back to core factory configuration? All data will clear.")) {
+                localStorage.clear();
+                dynamicCategoriesList = ["Cookies", "Drinks", "Cakes", "Gummies", "Brownies"];
+                ledgerList = [{ id: "init-cook", name: "Loaded Cookies", category: "Cookies", mg: 50, totalYield: 86, stock: 86, unitType: "pucks", stage: "Frozen", freezeDate: getUkTodayString() }];
+                discountCampaignRules = [{ mgTier: 50, triggerQty: 5, flatPrice: 20 }, { mgTier: 100, triggerQty: 3, flatPrice: 25 }];
+                activeItemId = "init-cook"; globalRevenue = 0; totalSold = 0; highestMg = 50; eatenCount = 0; lossCount = 0;
+                variantSalesRegistry = { "Loaded Cookies": { category: "Cookies", units: 0, revenue: 0 } };
+                transactionTimeline = []; applicationHistoryStack = [];
+                currentChartContext = 'macro';
+                updateSystemUI();
+            }
+        });
+
+        function renderDataVisualizations() {
+            const contextRef = document.getElementById('businessChart').getContext('2d');
+            const titleElement = document.getElementById('chartTitle');
+            
+            if (systemChartInstance) systemChartInstance.destroy();
+            const chartColors = ['#4caf50', '#00bcd4', '#9c27b0', '#ff9800', '#e91e63', '#2196f3', '#ff5722', '#009688', '#3f51b5'];
+
+            if (currentChartContext === 'macro') {
+                titleElement.textContent = "Macro Distribution Profile (Units Sold)";
+                let macroTotals = {};
+                dynamicCategoriesList.forEach(cat => macroTotals[cat] = 0);
+
+                Object.values(variantSalesRegistry).forEach(v => {
+                    if (macroTotals[v.category] !== undefined) macroTotals[v.category] += v.units;
+                });
+
+                const labels = Object.keys(macroTotals);
+                const dataValues = Object.values(macroTotals);
+                const grandTotal = dataValues.reduce((a,b) => a+b, 0);
+
+                systemChartInstance = new Chart(contextRef, {
+                    type: 'pie',
+                    data: {
+                        labels: grandTotal === 0 ? ['No Sales Registered'] : labels,
+                        datasets: [{
+                            data: grandTotal === 0 ? [1] : dataValues,
+                            backgroundColor: grandTotal === 0 ? ['#222'] : chartColors,
+                            borderWidth: 1, borderColor: '#141414'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' }, position: 'bottom' } } }
+                });
+
+            } else if (currentChartContext.startsWith('drilldown-')) {
+                const activeDrilldownCategory = currentChartContext.split('drilldown-')[1];
+                titleElement.textContent = `${activeDrilldownCategory} Performance Sub-Mix (Portions Sold)`;
+                
+                let drilldownLabels = [];
+                let drilldownData = [];
+                
+                Object.keys(variantSalesRegistry).forEach(name => {
+                    if (variantSalesRegistry[name].category === activeDrilldownCategory && variantSalesRegistry[name].units > 0) {
+                        drilldownLabels.push(name);
+                        drilldownData.push(variantSalesRegistry[name].units);
+                    }
+                });
+
+                const totalSpecificCategoryUnitsSold = drilldownData.reduce((a,b) => a+b, 0);
+
+                systemChartInstance = new Chart(contextRef, {
+                    type: 'pie',
+                    data: {
+                        labels: totalSpecificCategoryUnitsSold === 0 ? [`No ${activeDrilldownCategory} Variant Sales Yet`] : drilldownLabels,
+                        datasets: [{
+                            data: totalSpecificCategoryUnitsSold === 0 ? [1] : drilldownData,
+                            backgroundColor: totalSpecificCategoryUnitsSold === 0 ? ['#222'] : chartColors.slice().reverse(),
+                            borderWidth: 1, borderColor: '#141414'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' }, position: 'bottom' } } }
+                });
+
+            } else {
+                titleElement.textContent = "Enterprise Revenue Velocity Profile";
+                let intervals = transactionTimeline.map(t => t.timestamp);
+                let trendCurves = transactionTimeline.map(t => t.revenueSnap);
+
+                if (transactionTimeline.length === 0) {
+                    intervals = ['Base Matrix Ready']; trendCurves = [0];
+                }
+
+                systemChartInstance = new Chart(contextRef, {
+                    type: 'line',
+                    data: {
+                        labels: intervals,
+                        datasets: [{
+                            label: 'Gross Income (£)', data: trendCurves,
+                            borderColor: '#ffb300', backgroundColor: 'rgba(255, 179, 0, 0.05)',
+                            borderWidth: 3, fill: true, tension: 0.2, pointBackgroundColor: '#ffb300'
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { grid: { color: '#222' }, ticks: { color: '#666' } },
+                            x: { grid: { color: '#222' }, ticks: { color: '#666' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
+
+        updateSystemUI();
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
